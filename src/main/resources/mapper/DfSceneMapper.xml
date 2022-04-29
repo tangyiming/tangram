@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tangym.tangram.mapper.DfSceneMapper">
+
+    <resultMap id="BaseResultMap" type="com.tangym.tangram.entity.DfScene">
+            <result property="id" column="id" jdbcType="INTEGER"/>
+            <result property="sceneName" column="scene_name" jdbcType="VARCHAR"/>
+            <result property="sceneDesc" column="scene_desc" jdbcType="VARCHAR"/>
+            <result property="commonParams" column="common_params" jdbcType="VARCHAR"/>
+            <result property="flowData" column="flow_data" jdbcType="VARCHAR"/>
+            <result property="sceneStatus" column="scene_status" jdbcType="INTEGER"/>
+            <result property="bizlineId" column="bizline_id" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+            <association property="bizLine" javaType="com.tangym.tangram.entity.DfBizLine">
+                <id column="bizline_id" jdbcType="INTEGER" property="id"/>
+                <result property="bizName" column="biz_name" jdbcType="VARCHAR"/>
+                <result property="bizCode" column="biz_code" jdbcType="VARCHAR"/>
+                <result property="baseUrl" column="base_url" jdbcType="VARCHAR"/>
+                <result property="charger" column="charger" jdbcType="VARCHAR"/>
+                <result property="authInfo" column="auth_info" jdbcType="VARCHAR"/>
+            </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,scene_name,scene_desc,
+        common_params,flow_data,scene_status,
+        bizline_id,create_time,update_time,
+        created_by
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from df_scene
+        where
+    </select>
+    <select id="queryBy" parameterType="com.tangym.tangram.dto.CmpSceneQuery" resultMap="BaseResultMap">
+        select * from df_scene A left join df_biz_line B on A.bizline_id = B.id
+        <where>
+            <if test="status != ''">
+                A.scene_status = #{status}
+            </if>
+            <if test="name != ''">
+                and A.scene_name like concat('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from df_scene
+        where id = #{id} and scene_status = 0
+    </delete>
+    <insert id="insert">
+        insert into df_scene
+        ( id,scene_name,scene_desc
+        ,common_params,flow_data,scene_status
+        ,bizline_id,create_time,update_time
+        ,created_by)
+        values (#{id,jdbcType=INTEGER},#{sceneName,jdbcType=VARCHAR},#{sceneDesc,jdbcType=VARCHAR}
+        ,#{commonParams,jdbcType=VARCHAR},#{flowData,jdbcType=VARCHAR},0
+        ,#{bizlineId,jdbcType=INTEGER},current_timestamp(),#{updateTime,jdbcType=TIMESTAMP}
+        ,#{createdBy,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective">
+        insert into df_scene
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="sceneName != null">scene_name,</if>
+                <if test="sceneDesc != null">scene_desc,</if>
+                <if test="commonParams != null">common_params,</if>
+                <if test="flowData != null">flow_data,</if>
+                <if test="sceneStatus != null">scene_status,</if>
+                <if test="bizlineId != null">bizline_id,</if>
+                <if test="createTime != null">create_time,</if>
+                <if test="updateTime != null">update_time,</if>
+                <if test="createdBy != null">created_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id,jdbcType=INTEGER},</if>
+                <if test="sceneName != null">#{sceneName,jdbcType=VARCHAR},</if>
+                <if test="sceneDesc != null">#{sceneDesc,jdbcType=VARCHAR},</if>
+                <if test="commonParams != null">#{commonParams,jdbcType=VARCHAR},</if>
+                <if test="flowData != null">#{flowData,jdbcType=VARCHAR},</if>
+                <if test="sceneStatus != null">#{sceneStatus,jdbcType=INTEGER},</if>
+                <if test="bizlineId != null">#{bizlineId,jdbcType=INTEGER},</if>
+                <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+                <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+                <if test="createdBy != null">#{createdBy,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tangym.tangram.entity.DfScene">
+        update df_scene
+        <set>
+                <if test="id != null">
+                    id = #{id,jdbcType=INTEGER},
+                </if>
+                <if test="sceneName != null">
+                    scene_name = #{sceneName,jdbcType=VARCHAR},
+                </if>
+                <if test="sceneDesc != null">
+                    scene_desc = #{sceneDesc,jdbcType=VARCHAR},
+                </if>
+                <if test="commonParams != null">
+                    common_params = #{commonParams,jdbcType=VARCHAR},
+                </if>
+                <if test="flowData != null">
+                    flow_data = #{flowData,jdbcType=VARCHAR},
+                </if>
+                <if test="sceneStatus != null">
+                    scene_status = #{sceneStatus,jdbcType=INTEGER},
+                </if>
+                <if test="bizlineId != null">
+                    bizline_id = #{bizlineId,jdbcType=INTEGER},
+                </if>
+                <if test="createTime != null">
+                    create_time = #{createTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="updateTime != null">
+                    update_time = #{updateTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="createdBy != null">
+                    created_by = #{createdBy,jdbcType=VARCHAR},
+                </if>
+        </set>
+        where
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tangym.tangram.entity.DfScene">
+        update df_scene
+        set
+            id =  #{id,jdbcType=INTEGER},
+            scene_name =  #{sceneName,jdbcType=VARCHAR},
+            scene_desc =  #{sceneDesc,jdbcType=VARCHAR},
+            common_params =  #{commonParams,jdbcType=VARCHAR},
+            flow_data =  #{flowData,jdbcType=VARCHAR},
+            scene_status =  #{sceneStatus,jdbcType=INTEGER},
+            bizline_id =  #{bizlineId,jdbcType=INTEGER},
+            create_time =  #{createTime,jdbcType=TIMESTAMP},
+            update_time =  current_timestamp(),
+            created_by =  #{createdBy,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

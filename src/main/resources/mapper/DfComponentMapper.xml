@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tangym.tangram.mapper.DfComponentMapper">
+
+    <resultMap id="BaseResultMap" type="com.tangym.tangram.entity.DfComponent">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="compName" column="comp_name" jdbcType="VARCHAR"/>
+        <result property="compDesc" column="comp_desc" jdbcType="VARCHAR"/>
+        <result property="compType" column="comp_type" jdbcType="INTEGER"/>
+        <result property="params" column="params" jdbcType="VARCHAR"/>
+        <result property="output" column="output" jdbcType="VARCHAR"/>
+        <result property="urlpath" column="urlpath" jdbcType="VARCHAR"/>
+        <result property="className" column="class_name" jdbcType="VARCHAR"/>
+        <result property="bizId" column="biz_id" jdbcType="INTEGER"/>
+        <result property="compStatus" column="comp_status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <association property="bizLine" javaType="com.tangym.tangram.entity.DfBizLine">
+            <id column="biz_id" jdbcType="INTEGER" property="id"/>
+            <result property="bizName" column="biz_name" jdbcType="VARCHAR"/>
+            <result property="bizCode" column="biz_code" jdbcType="VARCHAR"/>
+            <result property="baseUrl" column="base_url" jdbcType="VARCHAR"/>
+            <result property="charger" column="charger" jdbcType="VARCHAR"/>
+            <result property="authInfo" column="auth_info" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,comp_name,comp_desc,
+        comp_type,params,output,
+        urlpath,class_name,biz_id,
+        comp_status,create_time,update_time,
+        created_by
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from df_component
+        where
+    </select>
+    <select id="queryBy" parameterType="com.tangym.tangram.dto.CmpSceneQuery" resultMap="BaseResultMap">
+        select * from df_component A left join df_biz_line B on A.biz_id = B.id
+        <where>
+            <if test="status != ''">
+                A.comp_status = #{status}
+            </if>
+            <if test="name != ''">
+                and A.comp_name like concat('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from df_component
+        where id = #{id} and comp_status = 0
+    </delete>
+    <insert id="insert">
+        insert into df_component
+        ( id,comp_name,comp_desc
+        ,comp_type,params,output
+        ,urlpath,class_name,biz_id
+        ,comp_status,create_time,update_time
+        ,created_by)
+        values (#{id,jdbcType=INTEGER},#{compName,jdbcType=VARCHAR},#{compDesc,jdbcType=VARCHAR}
+        ,#{compType,jdbcType=INTEGER},#{params,jdbcType=VARCHAR},#{output,jdbcType=VARCHAR}
+        ,#{urlpath,jdbcType=VARCHAR},#{className,jdbcType=VARCHAR},#{bizId,jdbcType=INTEGER}
+        ,0,current_timestamp(),#{updateTime,jdbcType=TIMESTAMP}
+        ,#{createdBy,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective">
+        insert into df_component
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="compName != null">comp_name,</if>
+            <if test="compDesc != null">comp_desc,</if>
+            <if test="compType != null">comp_type,</if>
+            <if test="params != null">params,</if>
+            <if test="output != null">output,</if>
+            <if test="urlpath != null">urlpath,</if>
+            <if test="className != null">class_name,</if>
+            <if test="bizId != null">biz_id,</if>
+            <if test="compStatus != null">comp_status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createdBy != null">created_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="compName != null">#{compName,jdbcType=VARCHAR},</if>
+            <if test="compDesc != null">#{compDesc,jdbcType=VARCHAR},</if>
+            <if test="compType != null">#{compType,jdbcType=INTEGER},</if>
+            <if test="params != null">#{params,jdbcType=VARCHAR},</if>
+            <if test="output != null">#{output,jdbcType=VARCHAR},</if>
+            <if test="urlpath != null">#{urlpath,jdbcType=VARCHAR},</if>
+            <if test="className != null">#{className,jdbcType=VARCHAR},</if>
+            <if test="bizId != null">#{bizId,jdbcType=INTEGER},</if>
+            <if test="compStatus != null">#{compStatus,jdbcType=INTEGER},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
+            <if test="updateTime != null">#{updateTime,jdbcType=TIMESTAMP},</if>
+            <if test="createdBy != null">#{createdBy,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tangym.tangram.entity.DfComponent">
+        update df_component
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="compName != null">
+                comp_name = #{compName,jdbcType=VARCHAR},
+            </if>
+            <if test="compDesc != null">
+                comp_desc = #{compDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="compType != null">
+                comp_type = #{compType,jdbcType=INTEGER},
+            </if>
+            <if test="params != null">
+                params = #{params,jdbcType=VARCHAR},
+            </if>
+            <if test="output != null">
+                output = #{output,jdbcType=VARCHAR},
+            </if>
+            <if test="urlpath != null">
+                urlpath = #{urlpath,jdbcType=VARCHAR},
+            </if>
+            <if test="className != null">
+                class_name = #{className,jdbcType=VARCHAR},
+            </if>
+            <if test="bizId != null">
+                biz_id = #{bizId,jdbcType=INTEGER},
+            </if>
+            <if test="compStatus != null">
+                comp_status = #{compStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tangym.tangram.entity.DfComponent">
+        update df_component
+        set
+        comp_name = #{compName,jdbcType=VARCHAR},
+        comp_desc = #{compDesc,jdbcType=VARCHAR},
+        comp_type = #{compType,jdbcType=INTEGER},
+        params = #{params,jdbcType=VARCHAR},
+        output = #{output,jdbcType=VARCHAR},
+        urlpath = #{urlpath,jdbcType=VARCHAR},
+        class_name = #{className,jdbcType=VARCHAR},
+        biz_id = #{bizId,jdbcType=INTEGER},
+        comp_status = #{compStatus,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = current_timestamp(),
+        created_by = #{createdBy,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

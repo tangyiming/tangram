@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: tangram
+  mvc:
+    servlet:
+      load-on-startup: 1
+      path: /
+  datasource:
+    tangram:
+      jdbc-url: jdbc:mysql://localhost:3306/tangram?characterEncoding=utf8&allowMultiQueries=true&autoReconnect=true&useAffectedRows=true&useSSL=false
+      username: root
+      password: root
+      driver-class-name: com.mysql.jdbc.Driver
+
+server:
+  servlet:
+    context-path: /tangram
+    application-display-name: tangram
+  port: 9090
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+

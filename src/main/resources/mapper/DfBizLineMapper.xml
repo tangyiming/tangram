@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tangym.tangram.mapper.DfBizLineMapper">
+
+    <resultMap id="BaseResultMap" type="com.tangym.tangram.entity.DfBizLine">
+            <result property="id" column="id" jdbcType="INTEGER"/>
+            <result property="bizName" column="biz_name" jdbcType="VARCHAR"/>
+            <result property="bizCode" column="biz_code" jdbcType="VARCHAR"/>
+            <result property="baseUrl" column="base_url" jdbcType="VARCHAR"/>
+            <result property="charger" column="charger" jdbcType="VARCHAR"/>
+            <result property="authInfo" column="auth_info" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,biz_name,biz_code,
+        base_url,charger,auth_info
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from df_biz_line
+        where id =  #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from df_biz_line
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert">
+        insert into df_biz_line
+        ( id,biz_name,biz_code
+        ,base_url,charger,auth_info
+        )
+        values (#{id,jdbcType=INTEGER},#{bizName,jdbcType=VARCHAR},#{bizCode,jdbcType=VARCHAR}
+        ,#{baseUrl,jdbcType=VARCHAR},#{charger,jdbcType=VARCHAR},#{authInfo,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective">
+        insert into df_biz_line
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">id,</if>
+                <if test="bizName != null">biz_name,</if>
+                <if test="bizCode != null">biz_code,</if>
+                <if test="baseUrl != null">base_url,</if>
+                <if test="charger != null">charger,</if>
+                <if test="authInfo != null">auth_info,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">#{id,jdbcType=INTEGER},</if>
+                <if test="bizName != null">#{bizName,jdbcType=VARCHAR},</if>
+                <if test="bizCode != null">#{bizCode,jdbcType=VARCHAR},</if>
+                <if test="baseUrl != null">#{baseUrl,jdbcType=VARCHAR},</if>
+                <if test="charger != null">#{charger,jdbcType=VARCHAR},</if>
+                <if test="authInfo != null">#{authInfo,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tangym.tangram.entity.DfBizLine">
+        update df_biz_line
+        <set>
+                <if test="id != null">
+                    id = #{id,jdbcType=INTEGER},
+                </if>
+                <if test="bizName != null">
+                    biz_name = #{bizName,jdbcType=VARCHAR},
+                </if>
+                <if test="bizCode != null">
+                    biz_code = #{bizCode,jdbcType=VARCHAR},
+                </if>
+                <if test="baseUrl != null">
+                    base_url = #{baseUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="charger != null">
+                    charger = #{charger,jdbcType=VARCHAR},
+                </if>
+                <if test="authInfo != null">
+                    auth_info = #{authInfo,jdbcType=VARCHAR},
+                </if>
+        </set>
+        where
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tangym.tangram.entity.DfBizLine">
+        update df_biz_line
+        set
+            biz_name =  #{bizName,jdbcType=VARCHAR},
+            biz_code =  #{bizCode,jdbcType=VARCHAR},
+            base_url =  #{baseUrl,jdbcType=VARCHAR},
+            charger =  #{charger,jdbcType=VARCHAR},
+            auth_info =  #{authInfo,jdbcType=VARCHAR}
+        where  id =  #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

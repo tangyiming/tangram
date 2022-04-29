@@ -1,0 +1,77 @@
+CREATE DATABASE `tangram` /*!40100 DEFAULT CHARACTER SET latin1 */
+
+CREATE TABLE `df_biz_line` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `biz_name` varchar(16) DEFAULT NULL,
+  `biz_code` varchar(16) DEFAULT NULL,
+  `base_url` varchar(64) DEFAULT NULL,
+  `charger` json DEFAULT NULL,
+  `auth_info` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_biz_line_id_uindex` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `df_component` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `comp_name` varchar(32) NOT NULL,
+  `comp_desc` varchar(256) NOT NULL,
+  `comp_type` int(11) NOT NULL COMMENT '0:rest\n1:java',
+  `params` json DEFAULT NULL,
+  `output` json DEFAULT NULL,
+  `urlpath` varchar(64) DEFAULT NULL,
+  `class_name` varchar(32) DEFAULT NULL COMMENT 'java组件类名',
+  `biz_id` int(11) DEFAULT NULL,
+  `comp_status` int(11) DEFAULT '0' COMMENT '0:待审核\n1:审核通过',
+  `create_time` timestamp NULL DEFAULT NULL,
+  `update_time` timestamp NULL DEFAULT NULL,
+  `created_by` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_rest_component_id_uindex` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='造数组件'
+
+CREATE TABLE `df_component_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `component_id` int(11) NOT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  `modified_by` varchar(32) DEFAULT NULL,
+  `comment` varchar(128) DEFAULT NULL,
+  `diff` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_component_logs_id_uindex` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `df_jar` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `biz_line_id` int(11) DEFAULT NULL,
+  `maven` json DEFAULT NULL,
+  `created_by` varchar(16) DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_jar_id_uindex` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `df_scene` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `scene_name` varchar(64) DEFAULT NULL,
+  `scene_desc` varchar(128) DEFAULT NULL,
+  `common_params` json DEFAULT NULL,
+  `flow_data` json DEFAULT NULL,
+  `bizline_id` int(11) DEFAULT NULL,
+  `scene_status` int(11) DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  `update_time` timestamp NULL DEFAULT NULL,
+  `created_by` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_scene_id_uindex` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4
+
+CREATE TABLE `df_scene_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `scene_id` int(11) NOT NULL,
+  `create_time` timestamp NULL DEFAULT NULL,
+  `modified_by` varchar(32) DEFAULT NULL,
+  `comment` varchar(128) DEFAULT NULL,
+  `diff` json DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `df_scene_log_id_uindex` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
