@@ -107,12 +107,12 @@
                             <Container
                                 group-name="1"
                                 :get-child-payload="i => getChildPayload2(i)"
-                                @drop="onDrop('sceneDTO', $event)"
+                                @drop="onDrop('scene', $event)"
                                 :remove-on-drop-out="true"
                                 style="padding-bottom: 5px; border: 2px dashed rgb(150, 147, 147)"
                             >
-                                <Draggable v-for="(cmp, index) in sceneDTO" :key="index">
-                                    <div class="cmp-sceneDTO">
+                                <Draggable v-for="(cmp, index) in scene" :key="index">
+                                    <div class="cmp-scene">
                                         <div v-for="(v, i) in cmp.params" :key="i">
                                             <span style="display: flex">
                                                 <a-input v-model="v.key" placeholder="参数名" style="width: 150px" disabled />
@@ -136,7 +136,7 @@
                                         </div>
                                     </div>
                                 </Draggable>
-                                <div style="text-align: center; height: 60px; margin-top: 40px" v-if="sceneDTO.length === 0">
+                                <div style="text-align: center; height: 60px; margin-top: 40px" v-if="scene.length === 0">
                                     <h1>组件组装区域，请将左侧组件拖到此处</h1>
                                 </div>
                             </Container>
@@ -211,7 +211,7 @@ export default {
             comps: {},
             scenes: [],
             columns,
-            sceneDTO: [],
+            scene: [],
             choices: [],
             showChoices: [],
             name: undefined,
@@ -264,10 +264,10 @@ export default {
             this.sceneId = undefined
             this.createdBy = undefined
             this.commonParams = []
-            this.sceneDTO = []
+            this.scene = []
         },
         excuteSceneOutSide(val) {
-            this.sceneDTO = JSON.parse(val.flowData)
+            this.scene = JSON.parse(val.flowData)
             this.commonParams = JSON.parse(val.commonParams)
             this.excuteScene()
         },
@@ -309,12 +309,12 @@ export default {
             return this.comps[k][index - 1]
         },
         getChildPayload2(index) {
-            return this.sceneDTO[index]
+            return this.scene[index]
         },
         onDrop(collection, dropResult) {
             this[collection] = applyDrag(this[collection], dropResult)
             this.choices = []
-            this.sceneDTO.forEach((cmp, index) => {
+            this.scene.forEach((cmp, index) => {
                 cmp.output.forEach(out => {
                     this.choices.push(index + ':' + out.key)
                 })
@@ -332,14 +332,14 @@ export default {
             })
         },
         handleMapChange(val, index, i) {
-            this.sceneDTO[index].params[i].value = undefined
-            this.sceneDTO[index].params[i].mapping = val
+            this.scene[index].params[i].value = undefined
+            this.scene[index].params[i].mapping = val
         },
         handleValChange(index, i) {
-            this.sceneDTO[index].params[i].mapping = undefined
+            this.scene[index].params[i].mapping = undefined
         },
         excuteScene() {
-            sceneExec({ flowData: this.sceneDTO, commonParams: this.commonParams }).then(res => {
+            sceneExec({ flowData: this.scene, commonParams: this.commonParams }).then(res => {
                 if (res.result === 1) {
                     this.$message.success(res.data)
                 }
@@ -352,7 +352,7 @@ export default {
                     sceneName: this.name,
                     sceneDesc: this.desc,
                     bizlineId: this.bizId,
-                    flowData: JSON.stringify(this.sceneDTO),
+                    flowData: JSON.stringify(this.scene),
                     commonParams: JSON.stringify(this.commonParams),
                     createdBy: JSON.stringify(u),
                 }
@@ -369,7 +369,7 @@ export default {
                     sceneName: this.name,
                     sceneDesc: this.desc,
                     bizlineId: this.bizId,
-                    flowData: JSON.stringify(this.sceneDTO),
+                    flowData: JSON.stringify(this.scene),
                     commonParams: JSON.stringify(this.commonParams),
                     createdBy: this.createdBy,
                 }
@@ -389,10 +389,10 @@ export default {
             this.bizId = val.bizlineId
             this.createdBy = val.createdBy
             this.sceneId = val.id
-            this.sceneDTO = JSON.parse(val.flowData)
+            this.scene = JSON.parse(val.flowData)
             this.commonParams = JSON.parse(val.commonParams)
             this.choices = []
-            this.sceneDTO.forEach((cmp, index) => {
+            this.scene.forEach((cmp, index) => {
                 cmp.output.forEach(out => {
                     this.choices.push(index + ':' + out.key)
                 })
@@ -401,7 +401,7 @@ export default {
         },
         quitSceneAdd() {
             this.visible = true
-            this.sceneDTO = []
+            this.scene = []
             this.handleQuery()
         },
         addParams() {
