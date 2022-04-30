@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @author :  唐一鸣
  * @url :  https://github.com/tangyiming
- * 组件参数对象
+ * 组件参数对象,或场景公共参数对象
  */
 
 @Data

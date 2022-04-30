@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @author :  唐一鸣
  * @url :  https://github.com/tangyiming
- *
+ * <p>
  * 业务线实体
  */
 

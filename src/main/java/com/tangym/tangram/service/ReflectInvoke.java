@@ -1,9 +1,8 @@
 package com.tangym.tangram.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
+import com.tangym.tangram.dto.ComponentDTO;
 import com.tangym.tangram.dto.NamedParam;
-import com.tangym.tangram.entity.DfComponent;
 import com.tangym.tangram.util.SpringBootBeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -26,15 +25,14 @@ import java.util.Map;
 @Component
 public class ReflectInvoke {
 
-    public String javaComponentInvoke(DfComponent dfComponent, List<DfComponent> scene) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public String javaComponentInvoke(ComponentDTO component, List<NamedParam> sceneParams, List<ComponentDTO> flowData) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String res = null;
-        String className = dfComponent.getClassName();
+        String className = component.getClassName();
         Class<?> clz = this.getClass().getClassLoader().loadClass("com.tangym.tangram.component." + className);
         Method method = clz.getDeclaredMethod("execute", Map.class);
 
-        String namedParamsStr = dfComponent.getParams();
-        List<NamedParam> namedParam = JSONObject.parseObject(namedParamsStr, new TypeReference<List<NamedParam>>() {
-        });
+        List<NamedParam> namedParam = component.getParams();
+
         Map<String, Object> m = new HashMap<String, Object>();
         namedParam.forEach(p -> {
             if (p.getMapping() != null) {
@@ -42,16 +40,24 @@ public class ReflectInvoke {
                 String[] split = mapping.split(":");
                 String inx = split[0];
                 String key = split[1];
-                String output = scene.get(Integer.parseInt(inx)).getOutput();
-                JSONObject out = JSONObject.parseObject(output);
-                String mapv = "";
-                for (int o = 0; o < out.size(); o++) {
-                    if (out.get(key) != null) {
-                        mapv = out.get(key).toString();
+                if (inx.equals("SP")) {
+                    String mapv = "";
+                    for (NamedParam sp : sceneParams) {
+                        if (sp.getKey().equals(key)) {
+                            mapv = sp.getValue().toString();
+                        }
+                    }
+                    m.put(p.getKey(), mapv);
+                } else {
+                    List<NamedParam> output = flowData.get(Integer.parseInt(inx)).getOutput();
+                    String mapv = "";
+                    for (NamedParam out : output) {
+                        if (out.getKey().equals(key)) {
+                            mapv = out.getValue().toString();
+                        }
+                        m.put(p.getKey(), mapv);
                     }
                 }
-                m.put(p.getKey(), mapv);
-
             } else {
                 m.put(p.getKey(), p.getValue());
             }

@@ -1,25 +1,18 @@
-package com.tangym.tangram.entity;
+package com.tangym.tangram.dto;
 
+import com.tangym.tangram.entity.DfBizLine;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-
-/**
- * @author :  唐一鸣
- * @url :  https://github.com/tangyiming
- * <p>
- * 场景实体
- */
+import java.util.List;
 
 @Data
-public class DfScene implements Serializable {
-    private static final long serialVersionUID = -7960228345698436449L;
+public class SceneDTO {
     private Integer id;
     private String sceneName;
     private String sceneDesc;
-    private String commonParams;
-    private String flowData;
+    private List<NamedParam> commonParams;
+    private List<ComponentDTO> flowData;
     private Integer sceneStatus;
     private Integer bizlineId;
     private LocalDateTime createTime;

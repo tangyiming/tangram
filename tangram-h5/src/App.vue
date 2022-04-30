@@ -83,9 +83,9 @@ export default {
         this.initMenu()
     },
     mounted() {
-        localStorage.setItem('loginUser', { departmentName: 'QA', name: '唐一鸣', id: '1020215',jobNumber:'A1020215' })
+        localStorage.setItem('loginUser', { departmentName: 'QA', name: '唐一鸣', id: '1020215', jobNumber: 'A1020215' })
         localStorage.setItem('userName', '唐一鸣')
-        this.setLoginUser({ departmentName: 'QA', name: '唐一鸣', id: 'A1020215',jobNumber:'A1020215' })
+        this.setLoginUser({ departmentName: 'QA', name: '唐一鸣', id: 'A1020215', jobNumber: 'A1020215' })
     },
 
     methods: {

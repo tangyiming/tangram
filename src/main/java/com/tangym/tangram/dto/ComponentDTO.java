@@ -1,26 +1,20 @@
-package com.tangym.tangram.entity;
+package com.tangym.tangram.dto;
 
+import com.tangym.tangram.entity.DfBizLine;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-
-/**
- * @author :  唐一鸣
- * @url :  https://github.com/tangyiming
- * <p>
- * 组件实体
- */
+import java.util.List;
 
 @Data
-public class DfComponent implements Serializable {
-    private static final long serialVersionUID = -6893938350709398690L;
+public class ComponentDTO {
     private Integer id;
     private String compName;
     private String compDesc;
     private Integer compType;
-    private String params;
-    private String output;
+    private List<NamedParam> params;
+    private List<NamedParam> output;
+    private String res;
     private String urlpath;
     private String className;
     private Integer bizId;

@@ -257,6 +257,8 @@ export default {
             this.form.output = JSON.parse(val.output)
         },
         handleExecute(val) {
+            val.output = JSON.parse(val.output)
+            val.params = JSON.parse(val.params)
             cmpExec(val).then(res => {
                 this.$message.success(JSON.stringify(res.data))
             })

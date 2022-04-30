@@ -1,23 +1,24 @@
 package com.tangym.tangram.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tangym.tangram.dto.ApiResponse;
 import com.tangym.tangram.dto.CmpSceneQuery;
+import com.tangym.tangram.dto.ComponentDTO;
 import com.tangym.tangram.entity.DfComponent;
 import com.tangym.tangram.mapper.DfComponentMapper;
 import com.tangym.tangram.service.ComponentExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author :  唐一鸣
  * @url :  https://github.com/tangyiming
- *
+ * <p>
  * 组件管理接口
  */
 
@@ -70,14 +71,15 @@ public class ComponentController {
     }
 
     @PostMapping("/execute")
-    public ApiResponse<?> execute(@RequestBody DfComponent dfComponent) {
+    public ApiResponse<?> execute(@RequestBody ComponentDTO component) {
         String res;
-        if (dfComponent.getCompType() == 0) {
-            res = componentExecutor.executeHttpComp(dfComponent, null);
+        if (component.getCompType() == 0) {
+            res = componentExecutor.executeHttpComp(component, null, null);
         } else {
-            res = componentExecutor.exceteJavaComp(dfComponent, null);
+            res = componentExecutor.exceteJavaComp(component, null, null);
         }
-        dfComponent.setOutput(res);
-        return ApiResponse.succResponse(dfComponent);
+        // JSONObject.parseObject(res,new TypeReference<List<NamedParam>>() {})
+        component.setRes(res);
+        return ApiResponse.succResponse(component);
     }
 }

@@ -1,11 +1,9 @@
 package com.tangym.tangram.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tangym.tangram.dto.CmpSceneQuery;
-import com.tangym.tangram.mapper.DfSceneMapper;
-import com.tangym.tangram.dto.ApiResponse;
-import com.tangym.tangram.entity.DfComponent;
+import com.tangym.tangram.dto.*;
 import com.tangym.tangram.entity.DfScene;
+import com.tangym.tangram.mapper.DfSceneMapper;
 import com.tangym.tangram.service.ComponentExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +17,7 @@ import java.util.List;
 /**
  * @author :  唐一鸣
  * @url :  https://github.com/tangyiming
- *
+ * <p>
  * 测试场景管理接口
  */
 
@@ -33,9 +31,9 @@ public class SceneController {
     private ComponentExecutor componentExecutor;
 
     @PostMapping("/add")
-    public ApiResponse<?> add(@RequestBody DfScene dfScene){
+    public ApiResponse<?> add(@RequestBody DfScene dfScene) {
         int i = dfSceneMapper.insert(dfScene);
-        if(i>0) return ApiResponse.succResponse();
+        if (i > 0) return ApiResponse.succResponse();
         return ApiResponse.failResponse(-1);
     }
 
@@ -72,16 +70,18 @@ public class SceneController {
     }
 
     @PostMapping("/exec")
-    public ApiResponse<?> exec(@RequestBody List<DfComponent> scene){
-        scene.forEach(cmp->{
+    public ApiResponse<?> exec(@RequestBody SceneDTO sceneDTO) {
+        List<NamedParam> commonParams = sceneDTO.getCommonParams();
+        List<ComponentDTO> flowData = sceneDTO.getFlowData();
+        flowData.forEach(cmp -> {
             String res;
             if (cmp.getCompType() == 0) {
-                res = componentExecutor.executeHttpComp(cmp,scene);
+                res = componentExecutor.executeHttpComp(cmp, commonParams, flowData);
             } else {
-                res = componentExecutor.exceteJavaComp(cmp,scene);
+                res = componentExecutor.exceteJavaComp(cmp, commonParams, flowData);
             }
-            cmp.setOutput(res);
+            cmp.setRes(res);
         });
-        return ApiResponse.succResponse(JSONObject.toJSONString(scene));
+        return ApiResponse.succResponse(JSONObject.toJSONString(sceneDTO));
     }
 }

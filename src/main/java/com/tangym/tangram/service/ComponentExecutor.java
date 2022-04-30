@@ -1,6 +1,7 @@
 package com.tangym.tangram.service;
 
-import com.tangym.tangram.entity.DfComponent;
+import com.tangym.tangram.dto.ComponentDTO;
+import com.tangym.tangram.dto.NamedParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,18 +23,18 @@ public class ComponentExecutor {
     @Resource
     private ReflectInvoke reflectInvoke;
 
-    public String executeHttpComp(DfComponent component, List<DfComponent> scene) {
+    public String executeHttpComp(ComponentDTO component, List<NamedParam> commonParams, List<ComponentDTO> flowData) {
         try {
-            return httpRequest.doPost(component, scene);
+            return httpRequest.doPost(component, commonParams, flowData);
         } catch (Exception e) {
             log.error("http接口执行异常；{}", e.getMessage());
         }
         return null;
     }
 
-    public String exceteJavaComp(DfComponent component, List<DfComponent> scene) {
+    public String exceteJavaComp(ComponentDTO component, List<NamedParam> commonParams, List<ComponentDTO> flowData) {
         try {
-            return reflectInvoke.javaComponentInvoke(component, scene);
+            return reflectInvoke.javaComponentInvoke(component, commonParams, flowData);
         } catch (Exception e) {
             log.error("http接口执行异常；{}", e.getMessage());
         }

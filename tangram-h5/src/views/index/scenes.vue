@@ -89,18 +89,30 @@
                             <a-textarea placeholder="请输入场景描述" v-model="desc" style="margin-top: 5px" />
                         </div>
                         <div style="margin-top: 5px; padding: 5px; background-color: #fdf3a1; border-radius: 3px">
-                            <div style="background-color: #e7e7e7; margin-bottom: 5px; height: 80px; text-align: center">
-                                <h2 style="">TODO：场景全局参数设置区域(场景入参)</h2>
+                            <div style="background-color: #e7e7e7; margin-bottom: 5px">
+                                <a-button @click="addParams" type="primary" style="">新增场景参数</a-button>
+                                <div v-for="(v, i) in commonParams" :key="i">
+                                    <span>
+                                        <a-input v-model="v.key" placeholder="参数名" style="width: 220px" />
+                                        <a-select v-model="v.require" placeholder="必填" style="width: 100px; margin-left: 5px">
+                                            <a-select-option :value="1">必填</a-select-option>
+                                            <a-select-option :value="0">可选</a-select-option>
+                                        </a-select>
+                                        <a-input v-model="v.value" placeholder="值" style="width: 260px; margin-left: 5px" />
+                                        <a-button shape="circle" icon="delete" type="danger" :style="{ marginLeft: '10px' }" @click="deleteParams(i)" />
+                                        <a-textarea v-model="v.desc" placeholder="说明" auto-size />
+                                    </span>
+                                </div>
                             </div>
                             <Container
                                 group-name="1"
                                 :get-child-payload="i => getChildPayload2(i)"
-                                @drop="onDrop('scene', $event)"
+                                @drop="onDrop('sceneDTO', $event)"
                                 :remove-on-drop-out="true"
                                 style="padding-bottom: 5px; border: 2px dashed rgb(150, 147, 147)"
                             >
-                                <Draggable v-for="(cmp, index) in scene" :key="index">
-                                    <div class="cmp-scene">
+                                <Draggable v-for="(cmp, index) in sceneDTO" :key="index">
+                                    <div class="cmp-sceneDTO">
                                         <div v-for="(v, i) in cmp.params" :key="i">
                                             <span style="display: flex">
                                                 <a-input v-model="v.key" placeholder="参数名" style="width: 150px" disabled />
@@ -110,7 +122,7 @@
                                                     <a-select-option :value="0">可选</a-select-option>
                                                 </a-select>
                                                 <a-input v-model="v.value" placeholder="值" style="width: 200px; margin-left: 5px" @change="handleValChange(index, i)" />
-                                                <a-select v-if="index != 0" style="width: 200px" @focus="deleteAfter(index)" @change="v => handleMapChange(v, index, i)" v-model="v.mapping">
+                                                <a-select style="width: 200px" @focus="deleteAfter(index)" @change="v => handleMapChange(v, index, i)" v-model="v.mapping">
                                                     {{<a-select-option v-for="c in showChoices" :key="c">{{ c }}</a-select-option>
                                                 </a-select>
                                             </span>
@@ -124,7 +136,7 @@
                                         </div>
                                     </div>
                                 </Draggable>
-                                <div style="text-align: center; height: 60px; margin-top: 40px" v-if="scene.length === 0">
+                                <div style="text-align: center; height: 60px; margin-top: 40px" v-if="sceneDTO.length === 0">
                                     <h1>组件组装区域，请将左侧组件拖到此处</h1>
                                 </div>
                             </Container>
@@ -199,7 +211,7 @@ export default {
             comps: {},
             scenes: [],
             columns,
-            scene: [],
+            sceneDTO: [],
             choices: [],
             showChoices: [],
             name: undefined,
@@ -207,6 +219,7 @@ export default {
             bizId: undefined,
             sceneId: undefined,
             createdBy: undefined,
+            commonParams: [],
             rowClick: record => ({
                 on: {
                     click: () => {
@@ -250,10 +263,12 @@ export default {
             this.bizId = undefined
             this.sceneId = undefined
             this.createdBy = undefined
-            this.scene = []
+            this.commonParams = []
+            this.sceneDTO = []
         },
         excuteSceneOutSide(val) {
-            this.scene = JSON.parse(val.flowData)
+            this.sceneDTO = JSON.parse(val.flowData)
+            this.commonParams = JSON.parse(val.commonParams)
             this.excuteScene()
         },
         handleAudit(val) {
@@ -294,12 +309,12 @@ export default {
             return this.comps[k][index - 1]
         },
         getChildPayload2(index) {
-            return this.scene[index]
+            return this.sceneDTO[index]
         },
         onDrop(collection, dropResult) {
             this[collection] = applyDrag(this[collection], dropResult)
             this.choices = []
-            this.scene.forEach((cmp, index) => {
+            this.sceneDTO.forEach((cmp, index) => {
                 cmp.output.forEach(out => {
                     this.choices.push(index + ':' + out.key)
                 })
@@ -307,25 +322,24 @@ export default {
         },
         deleteAfter(idx) {
             this.showChoices = []
+            this.commonParams.forEach(cp => {
+                // SP SeceneParams 场景参数
+                this.showChoices.push('SP:' + cp.key)
+            })
             let tmp = JSON.parse(JSON.stringify(this.choices))
             tmp.forEach(i => {
                 i.split(':')[0] < idx ? this.showChoices.push(i) : null
             })
         },
         handleMapChange(val, index, i) {
-            this.scene[index].params[i].value = undefined
-            this.scene[index].params[i].mapping = val
+            this.sceneDTO[index].params[i].value = undefined
+            this.sceneDTO[index].params[i].mapping = val
         },
         handleValChange(index, i) {
-            this.scene[index].params[i].mapping = undefined
+            this.sceneDTO[index].params[i].mapping = undefined
         },
         excuteScene() {
-            let tmp = JSON.parse(JSON.stringify(this.scene))
-            tmp.forEach(cmp => {
-                cmp.params = JSON.stringify(cmp.params)
-                cmp.output = JSON.stringify(cmp.output)
-            })
-            sceneExec(tmp).then(res => {
+            sceneExec({ flowData: this.sceneDTO, commonParams: this.commonParams }).then(res => {
                 if (res.result === 1) {
                     this.$message.success(res.data)
                 }
@@ -334,7 +348,14 @@ export default {
         saveScene() {
             if (this.mode === 'add') {
                 let u = { name: this.loginUser.name, jobNumber: this.loginUser.jobNumber }
-                let p = { sceneName: this.name, sceneDesc: this.desc, bizlineId: this.bizId, flowData: JSON.stringify(this.scene), createdBy: JSON.stringify(u) }
+                let p = {
+                    sceneName: this.name,
+                    sceneDesc: this.desc,
+                    bizlineId: this.bizId,
+                    flowData: JSON.stringify(this.sceneDTO),
+                    commonParams: JSON.stringify(this.commonParams),
+                    createdBy: JSON.stringify(u),
+                }
                 sceneAdd(p)
                     .then(res => {
                         res.result === 1 ? this.$message.success('新增成功') : this.$message.error('新增失败')
@@ -343,8 +364,15 @@ export default {
                         this.quitSceneAdd()
                     })
             } else {
-                let p = { id: this.sceneId, sceneName: this.name, sceneDesc: this.desc, bizlineId: this.bizId, flowData: JSON.stringify(this.scene), createdBy: this.createdBy }
-                console.log(p)
+                let p = {
+                    id: this.sceneId,
+                    sceneName: this.name,
+                    sceneDesc: this.desc,
+                    bizlineId: this.bizId,
+                    flowData: JSON.stringify(this.sceneDTO),
+                    commonParams: JSON.stringify(this.commonParams),
+                    createdBy: this.createdBy,
+                }
                 sceneUpdate(p)
                     .then(res => {
                         res.result === 1 ? this.$message.success('更新成功') : this.$message.error('更新失败')
@@ -361,9 +389,10 @@ export default {
             this.bizId = val.bizlineId
             this.createdBy = val.createdBy
             this.sceneId = val.id
-            this.scene = JSON.parse(val.flowData)
+            this.sceneDTO = JSON.parse(val.flowData)
+            this.commonParams = JSON.parse(val.commonParams)
             this.choices = []
-            this.scene.forEach((cmp, index) => {
+            this.sceneDTO.forEach((cmp, index) => {
                 cmp.output.forEach(out => {
                     this.choices.push(index + ':' + out.key)
                 })
@@ -372,8 +401,14 @@ export default {
         },
         quitSceneAdd() {
             this.visible = true
-            this.scene = []
+            this.sceneDTO = []
             this.handleQuery()
+        },
+        addParams() {
+            this.commonParams.push({ key: '', value: '', desc: '' })
+        },
+        deleteParams(index) {
+            this.commonParams.splice(index, 1)
         },
     },
 }
