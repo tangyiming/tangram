@@ -22,6 +22,8 @@ public class ComponentExecutor {
     private HttpRequest httpRequest;
     @Resource
     private ReflectInvoke reflectInvoke;
+    @Resource
+    private DynamicLoadAndCall dynamicLoadAndCall;
 
     public String executeHttpComp(ComponentDTO component, List<NamedParam> commonParams, List<ComponentDTO> flowData) {
         try {
@@ -36,7 +38,16 @@ public class ComponentExecutor {
         try {
             return reflectInvoke.javaComponentInvoke(component, commonParams, flowData);
         } catch (Exception e) {
-            log.error("http接口执行异常；{}", e.getMessage());
+            log.error("java组件执行异常；{}", e.getMessage());
+        }
+        return null;
+    }
+
+    public String exceteCodeComp(ComponentDTO component,  List<NamedParam> commonParams, List<ComponentDTO> flowData) {
+        try {
+            return dynamicLoadAndCall.process(component, commonParams, flowData);
+        } catch (Exception e) {
+            log.error("code组件执行异常；{}", e.getMessage());
         }
         return null;
     }

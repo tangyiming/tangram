@@ -13,6 +13,7 @@
         <result property="output" column="output" jdbcType="VARCHAR"/>
         <result property="urlpath" column="urlpath" jdbcType="VARCHAR"/>
         <result property="className" column="class_name" jdbcType="VARCHAR"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
         <result property="bizId" column="biz_id" jdbcType="INTEGER"/>
         <result property="compStatus" column="comp_status" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -29,9 +30,10 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,comp_name,comp_desc,
+        id
+        ,comp_name,comp_desc,
         comp_type,params,output,
-        urlpath,class_name,biz_id,
+        urlpath,class_name,code,biz_id,
         comp_status,create_time,update_time,
         created_by
     </sql>
@@ -55,21 +57,24 @@
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-        delete from df_component
-        where id = #{id} and comp_status = 0
+        delete
+        from df_component
+        where id = #{id}
+          and comp_status = 0
     </delete>
-    <insert id="insert">
+    <insert id="insert" parameterType="com.tangym.tangram.entity.DfComponent" useGeneratedKeys="true" keyProperty="id">
         insert into df_component
-        ( id,comp_name,comp_desc
-        ,comp_type,params,output
-        ,urlpath,class_name,biz_id
-        ,comp_status,create_time,update_time
-        ,created_by)
-        values (#{id,jdbcType=INTEGER},#{compName,jdbcType=VARCHAR},#{compDesc,jdbcType=VARCHAR}
-        ,#{compType,jdbcType=INTEGER},#{params,jdbcType=VARCHAR},#{output,jdbcType=VARCHAR}
-        ,#{urlpath,jdbcType=VARCHAR},#{className,jdbcType=VARCHAR},#{bizId,jdbcType=INTEGER}
-        ,0,current_timestamp(),#{updateTime,jdbcType=TIMESTAMP}
-        ,#{createdBy,jdbcType=VARCHAR})
+        ( id, comp_name, comp_desc
+        , comp_type, params, output
+        , urlpath, class_name, code, biz_id
+        , comp_status, create_time, update_time
+        , created_by)
+        values ( #{id,jdbcType=INTEGER}, #{compName,jdbcType=VARCHAR}, #{compDesc,jdbcType=VARCHAR}
+               , #{compType,jdbcType=INTEGER}, #{params,jdbcType=VARCHAR}, #{output,jdbcType=VARCHAR}
+               , #{urlpath,jdbcType=VARCHAR}, #{className,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}
+               , #{bizId,jdbcType=INTEGER}
+               , 0, current_timestamp(), #{updateTime,jdbcType=TIMESTAMP}
+               , #{createdBy,jdbcType=VARCHAR})
     </insert>
     <insert id="insertSelective">
         insert into df_component
@@ -82,6 +87,7 @@
             <if test="output != null">output,</if>
             <if test="urlpath != null">urlpath,</if>
             <if test="className != null">class_name,</if>
+            <if test="code != null">code,</if>
             <if test="bizId != null">biz_id,</if>
             <if test="compStatus != null">comp_status,</if>
             <if test="createTime != null">create_time,</if>
@@ -97,6 +103,7 @@
             <if test="output != null">#{output,jdbcType=VARCHAR},</if>
             <if test="urlpath != null">#{urlpath,jdbcType=VARCHAR},</if>
             <if test="className != null">#{className,jdbcType=VARCHAR},</if>
+            <if test="code != null">#{code,jdbcType=VARCHAR},</if>
             <if test="bizId != null">#{bizId,jdbcType=INTEGER},</if>
             <if test="compStatus != null">#{compStatus,jdbcType=INTEGER},</if>
             <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP},</if>
@@ -131,6 +138,9 @@
             <if test="className != null">
                 class_name = #{className,jdbcType=VARCHAR},
             </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
             <if test="bizId != null">
                 biz_id = #{bizId,jdbcType=INTEGER},
             </if>
@@ -151,19 +161,19 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="com.tangym.tangram.entity.DfComponent">
         update df_component
-        set
-        comp_name = #{compName,jdbcType=VARCHAR},
-        comp_desc = #{compDesc,jdbcType=VARCHAR},
-        comp_type = #{compType,jdbcType=INTEGER},
-        params = #{params,jdbcType=VARCHAR},
-        output = #{output,jdbcType=VARCHAR},
-        urlpath = #{urlpath,jdbcType=VARCHAR},
-        class_name = #{className,jdbcType=VARCHAR},
-        biz_id = #{bizId,jdbcType=INTEGER},
-        comp_status = #{compStatus,jdbcType=INTEGER},
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-        update_time = current_timestamp(),
-        created_by = #{createdBy,jdbcType=VARCHAR}
+        set comp_name   = #{compName,jdbcType=VARCHAR},
+            comp_desc   = #{compDesc,jdbcType=VARCHAR},
+            comp_type   = #{compType,jdbcType=INTEGER},
+            params      = #{params,jdbcType=VARCHAR},
+            output      = #{output,jdbcType=VARCHAR},
+            urlpath     = #{urlpath,jdbcType=VARCHAR},
+            class_name  = #{className,jdbcType=VARCHAR},
+            code        = #{code,jdbcType=VARCHAR},
+            biz_id      = #{bizId,jdbcType=INTEGER},
+            comp_status = #{compStatus,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = current_timestamp(),
+            created_by  = #{createdBy,jdbcType=VARCHAR}
         where id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>

@@ -17,6 +17,7 @@ public class ComponentDTO {
     private String res;
     private String urlpath;
     private String className;
+    private String code;
     private Integer bizId;
     private Integer compStatus;
     private LocalDateTime createTime;

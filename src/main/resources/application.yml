@@ -7,7 +7,7 @@ spring:
       path: /
   datasource:
     tangram:
-      jdbc-url: jdbc:mysql://localhost:3306/tangram?characterEncoding=utf8&allowMultiQueries=true&autoReconnect=true&useAffectedRows=true&useSSL=false
+      jdbc-url: jdbc:mysql://localhost:3306/tangram?serverTimezone=UTC&characterEncoding=utf8&allowMultiQueries=true&autoReconnect=true&useAffectedRows=true&useSSL=false
       username: root
       password: root
       driver-class-name: com.mysql.jdbc.Driver

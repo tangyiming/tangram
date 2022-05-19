@@ -23,6 +23,7 @@ public class DfComponent implements Serializable {
     private String output;
     private String urlpath;
     private String className;
+    private String code;
     private Integer bizId;
     private Integer compStatus;
     private LocalDateTime createTime;

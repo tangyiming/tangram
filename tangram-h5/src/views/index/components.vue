@@ -36,6 +36,7 @@
                 </template>
                 <template slot="compType" slot-scope="record">
                     <span v-if="record.compType === 0">远程</span>
+                    <span v-else-if="record.compType===2">代码</span>
                     <span v-else>本地</span>
                 </template>
                 <template slot="operation" slot-scope="record">
@@ -85,6 +86,7 @@
                     <a-select v-model="form.compType">
                         <a-select-option :value="0"> 远程 </a-select-option>
                         <a-select-option :value="1"> 本地 </a-select-option>
+                        <a-select-option :value="2"> 代码 </a-select-option>
                     </a-select>
                 </a-form-model-item>
                 <a-button @click="addParams('params')" type="primary" style="margin-left: 155px">新增入参</a-button>
@@ -117,6 +119,9 @@
                 </a-form-model-item>
                 <a-form-model-item label="类名" ref="className" prop="className" v-show="form.compType === 1">
                     <a-input v-model="form.className" />
+                </a-form-model-item>
+                <a-form-model-item label="代码" ref="code" prop="code" v-show="form.compType === 2">
+                    <a-textarea v-model="form.code"></a-textarea>
                 </a-form-model-item>
                 <a-form-model-item label="所属业务" ref="bizId" prop="bizId">
                     <a-select v-model="form.bizId">
@@ -196,6 +201,7 @@ export default {
                 output: [],
                 urlpath: undefined,
                 className: undefined,
+                code:undefined,
                 bizId: undefined,
                 compStatus: undefined,
                 createTime: undefined,
