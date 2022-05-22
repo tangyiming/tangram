@@ -114,9 +114,6 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.tangym.tangram.entity.DfComponent">
         update df_component
         <set>
-            <if test="id != null">
-                id = #{id,jdbcType=INTEGER},
-            </if>
             <if test="compName != null">
                 comp_name = #{compName,jdbcType=VARCHAR},
             </if>
@@ -157,7 +154,7 @@
                 created_by = #{createdBy,jdbcType=VARCHAR},
             </if>
         </set>
-        where
+        where id = #{id,jdbcType=INTEGER}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.tangym.tangram.entity.DfComponent">
         update df_component

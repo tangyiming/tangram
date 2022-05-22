@@ -62,9 +62,14 @@ public class ComponentController {
 
     @PostMapping("/update")
     public ApiResponse<?> update(@RequestBody DfComponent dfComponent) {
-        int i = dfComponentMapper.updateByPrimaryKey(dfComponent);
-        if (i > 0) return ApiResponse.succResponse();
-        return ApiResponse.failResponse(-1);
+        dfComponentMapper.updateByPrimaryKeySelective(dfComponent);
+        String clzFullName = FileUtil.getComponentClassFullName(dfComponent.getCode());
+        BizClasses bizClass = bizClassesMapper.selectByComponentId(dfComponent.getId());
+        bizClass.setBizId(dfComponent.getBizId());
+        bizClass.setClzFullName(clzFullName);
+        bizClass.setUpdateTime(LocalDateTime.now());
+        bizClassesMapper.updateByPrimaryKeySelective(bizClass);
+        return ApiResponse.succResponse();
     }
 
     @PostMapping("/updateStatus")

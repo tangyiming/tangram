@@ -19,6 +19,9 @@ public interface BizClassesMapper {
 
     int updateByPrimaryKey(BizClasses record);
 
-    @Select({"select clzFullName from biz_classes where biz_id=#{bizId}}"})
+    @Select({"select clz_full_name from biz_classes where biz_id=#{bizId}"})
     List<String> selectByBizId(Integer bizId);
+
+    @Select({"select * from biz_classes where component_id=#{id}"})
+    BizClasses selectByComponentId(Integer id);
 }

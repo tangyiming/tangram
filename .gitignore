@@ -39,3 +39,4 @@ rebel.xml
 node_modules/
 npm-debug.log
 coverage/
+TempClasses
