@@ -259,8 +259,8 @@ export default {
             this.visible = true
             this.modalTile = '编辑组件'
             this.form = { ...val }
-            this.form.params = JSON.parse(val.params)
-            this.form.output = JSON.parse(val.output)
+            this.form.params = JSON.parse(JSON.stringify(val.params))
+            this.form.output = JSON.parse(JSON.stringify(val.output))
         },
         handleExecute(val) {
             val.output = JSON.parse(val.output)
