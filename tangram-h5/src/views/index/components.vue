@@ -259,14 +259,16 @@ export default {
             this.visible = true
             this.modalTile = '编辑组件'
             this.form = { ...val }
-            this.form.params = JSON.parse(JSON.stringify(val.params))
-            this.form.output = JSON.parse(JSON.stringify(val.output))
+            this.form.params = JSON.parse(val.params)
+            this.form.output = JSON.parse(val.output)
         },
         handleExecute(val) {
             val.output = JSON.parse(val.output)
             val.params = JSON.parse(val.params)
             cmpExec(val).then(res => {
                 this.$message.success(JSON.stringify(res.data))
+                val.output = JSON.stringify(val.output)
+                val.params = JSON.stringify(val.params)
             })
         },
         handleOk() {
