@@ -26,14 +26,14 @@ import java.util.Map;
 public class ReflectInvoke {
 
     public String javaComponentInvoke(ComponentDTO component, List<NamedParam> sceneParams, List<ComponentDTO> flowData) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String res = null;
+        String res;
         String className = component.getClassName();
         Class<?> clz = this.getClass().getClassLoader().loadClass("com.tangym.tangram.component." + className);
         Method method = clz.getDeclaredMethod("execute", Map.class);
 
         List<NamedParam> namedParam = component.getParams();
 
-        Map<String, Object> m = new HashMap<String, Object>();
+        Map<String, Object> m = new HashMap<>();
         namedParam.forEach(p -> {
             if (p.getMapping() != null) {
                 String mapping = p.getMapping();

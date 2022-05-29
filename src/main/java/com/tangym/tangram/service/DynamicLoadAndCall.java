@@ -1,5 +1,6 @@
 package com.tangym.tangram.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.tangym.tangram.dto.ComponentDTO;
 import com.tangym.tangram.dto.NamedParam;
 import com.tangym.tangram.mapper.BizClassesMapper;
@@ -52,7 +53,7 @@ public class DynamicLoadAndCall {
             int flag = compile(paths.get("file"));
             if (flag == 0) {
                 init(paths.get("dir"), component.getBizId());
-                res = exec(component.getBizId(), clzFullName);
+                res = exec(component, sceneParams, flowData, clzFullName);
             }
         }
         return res;
@@ -77,7 +78,7 @@ public class DynamicLoadAndCall {
         diskLoader = new DiskClassLoader(path);
         loaders.put(bizId, diskLoader);
         List<String> names = bizClassesMapper.selectByBizId(bizId);
-        for (String clzFullName:names) {
+        for (String clzFullName : names) {
             Class<?> clz = diskLoader.loadClass(clzFullName);
             AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
             Object bean = beanFactory.createBean(clz);
@@ -90,14 +91,49 @@ public class DynamicLoadAndCall {
     /**
      * 执行调用
      */
-    private String exec(Integer bizId, String clzFullName) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        DiskClassLoader loader = loaders.get(bizId);
+    private String exec(ComponentDTO component, List<NamedParam> sceneParams, List<ComponentDTO> flowData, String clzFullName) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        DiskClassLoader loader = loaders.get(component.getBizId());
         if (null != loader) {
             Class<?> clz = loader.loadClass(clzFullName);
             Method preExecute = clz.getDeclaredMethod("preExecute", null);
             Method execute = clz.getDeclaredMethod("execute", Map.class);
             preExecute.invoke(bf.getBean(clz), null);
-            Object res = execute.invoke(bf.getBean(clz), new HashMap<>());
+
+            List<NamedParam> namedParam = component.getParams();
+
+            Map<String, Object> m = new HashMap<>();
+            namedParam.forEach(p -> {
+                if (p.getMapping() != null) {
+                    String mapping = p.getMapping();
+                    String[] split = mapping.split(":");
+                    String inx = split[0];
+                    String key = split[1];
+                    if (inx.equals("SP")) {
+                        String mapv = "";
+                        for (NamedParam sp : sceneParams) {
+                            if (sp.getKey().equals(key)) {
+                                mapv = sp.getValue().toString();
+                            }
+                        }
+                        m.put(p.getKey(), mapv);
+                    } else {
+                        List<NamedParam> output = flowData.get(Integer.parseInt(inx)).getOutput();
+                        String mapv = "";
+                        for (NamedParam out : output) {
+                            if (out.getKey().equals(key)) {
+                                mapv = out.getValue().toString();
+                            }
+                            m.put(p.getKey(), mapv);
+                        }
+                    }
+                } else {
+                    m.put(p.getKey(), p.getValue());
+                }
+
+            });
+            Map ma = new HashMap<>();
+            ma = JSONObject.parseObject(JSONObject.toJSONString(m), ma.getClass());
+            Object res = execute.invoke(bf.getBean(clz), ma);
             if (null != res) return res.toString();
         }
         return "";

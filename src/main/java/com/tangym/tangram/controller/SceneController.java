@@ -77,8 +77,10 @@ public class SceneController {
             String res;
             if (cmp.getCompType() == 0) {
                 res = componentExecutor.executeHttpComp(cmp, commonParams, flowData);
-            } else {
+            } else if(cmp.getCompType() == 1) {
                 res = componentExecutor.exceteJavaComp(cmp, commonParams, flowData);
+            }else {
+                res = componentExecutor.exceteCodeComp(cmp, commonParams, flowData);
             }
             cmp.setRes(res);
         });
