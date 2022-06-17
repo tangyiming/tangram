@@ -23,7 +23,7 @@ public class DemoEC implements ExeComponent {
 
     @Override
     public Map<String, ?> execute(Map<String, ?> map) {
-        Object p = map.get("lang");
+        Object p = map.get("aaa");
         log.info(p.toString()); // 3
         Map<String, Object> res = new HashMap<>();
         res.put("jvm", "jvm");
